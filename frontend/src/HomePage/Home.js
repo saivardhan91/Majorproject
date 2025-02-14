@@ -18,7 +18,8 @@ import {
 } from "@mui/material";
 import Navbar from "./Navbar";
 import { useNavigate } from "react-router-dom";
-
+import { useAuth } from "../routes/AuthContex";
+import axios from "axios";
 const matches = [
   { name: "M Bala Shivangini", age: "21 Yrs", height: "5'0", img: "https://assets.entrepreneur.com/content/3x2/2000/20150820205507-single-man-outdoors-happy-bliss.jpeg" },
   { name: "Vasanta", age: "20 Yrs", height: "5'1", img: "https://beyondages.com/wp-content/uploads/2020/06/AdobeStock_71430219.jpeg" },
@@ -30,9 +31,30 @@ const matches = [
 ];
 
 const MatrimonyDashboard = () => {
+  const auth=useAuth();
+  const [user, setUser] = useState({ name: "", avatar: "" });
   const [showAll, setShowAll] = useState(false);
   const navigate = useNavigate();
+  console.log(auth);
 
+  useEffect(() => {
+      const fetchUserData = async () => {
+        try {
+          const response = await axios.get(`http://localhost:5000/get-form/${auth?.user?.id}`); // Replace with your actual API endpoint
+          
+          setUser({
+            name: response?.data?.data?.name, // Extract name
+            avatar: response?.data?.data?.image, // Extract Base64 image
+          });// Assuming response contains { name: "User Name", avatar: "image_url" }
+          // console.log(user.name);
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      };
+  
+      fetchUserData();
+    }, []);
+  
   useEffect(() => {
     if (showAll) {
       navigate('/Matches');
@@ -50,11 +72,18 @@ const MatrimonyDashboard = () => {
          {/* Left Sidebar - Profile Section */}
          <Grid item xs={12} md={3}>
             <Paper elevation={3} sx={{ padding: 2, textAlign: "center" }}>
-              <Avatar sx={{ width: 80, height: 80, margin: "auto", bgcolor: "#ccc" }} />
+            <Avatar
+              sx={{ width: 80, height: 80, margin: "auto", bgcolor: "#ccc" }}
+              src={user.avatar 
+                ? (user.avatar.startsWith("data:image") ? user.avatar : `data:image/png;base64,${user.avatar}`)
+                : ""}
+              
+            />
+
               <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                Gulla Chinnu
+                {user?.name}
               </Typography>
-              <Typography variant="body2" sx={{ color: "gray" }}>T9787204</Typography>
+              <Typography variant="body2" sx={{ color: "gray" }}>{auth?.user?.accId}</Typography>
               <Typography variant="body2" sx={{ mt: 1 }}>
                 Membership: <b>Free</b>
               </Typography>
@@ -62,12 +91,18 @@ const MatrimonyDashboard = () => {
                 Upgrade
               </Button>
               <List sx={{ mt: 2 }}>
-                {["Edit Profile", "Edit Preferences", "Verify Your Profile", "Settings"].map((text, index) => (
-                  <ListItem key={index} button>
-                    <ListItemText primary={text} />
-                  </ListItem>
-                ))}
-              </List>
+              {[
+                { text: "Edit Profile", path: "/MyProfile" },
+                { text: "Edit Preferences", path: "/preferences" },
+                { text: "Verify Your Profile", path: "/verify" },
+                { text: "Settings", path: "/settings" },
+              ].map((item, index) => (
+                <ListItem key={index} button onClick={() => navigate(item.path)} sx={{cursor:"pointer"}}>
+                  <ListItemText primary={item.text} />
+                </ListItem>
+              ))}
+            </List>
+
             </Paper>
           </Grid>
 

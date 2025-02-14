@@ -24,7 +24,7 @@ const ProfessionalDetailsForm = () => {
     annualIncome: "",
     workLocation: "",
     state: "",
-    city: "",
+    country: "",
   });
 const navigate=useNavigate();
   const handleChange = (event) => {
@@ -160,8 +160,8 @@ const navigate=useNavigate();
         {/* City */}
         <TextField
           fullWidth
-          label="City"
-          name="city"
+          label="Country"
+          name="country"
           value={formData.city}
           onChange={handleChange}
         />

@@ -35,8 +35,8 @@ class FormController {
 
 async professionalDetails(req, res)  {
   try {
-      const { userId, highestEducation, employed, occupation, annualIncome, workLocation, state, city } = req.body;
-
+      const { userId, highestEducation, employed, occupation, annualIncome, workLocation, state, country } = req.body;
+console.log(highestEducation);
       if (!userId) {
           return res.status(400).json({ error: "User ID is required" });
       }
@@ -54,7 +54,7 @@ async professionalDetails(req, res)  {
           annualIncome: annualIncome || person.professionalDetails.annualIncome,
           workLocation: workLocation || person.professionalDetails.workLocation,
           state: state || person.professionalDetails.state,
-          city: city || person.professionalDetails.city,
+          country: country || person.professionalDetails.country,
       };
 
       await person.save();
@@ -68,8 +68,8 @@ async professionalDetails(req, res)  {
 
 async familyDetails(req, res)  {
   try {
-      const { userId, maritalStatus, height, familyStatus, familyType, familyValues, anyDisability } = req.body;
-
+      const { userId, maritalStatus, heightFeet,heightInches, familyStatus, familyType, familyValues, anyDisability } = req.body;
+      // console.log(heightFeet);
       if (!userId) {
           return res.status(400).json({ error: "User ID is required" });
       }
@@ -83,8 +83,8 @@ async familyDetails(req, res)  {
       person.familyDetails = {
           maritalStatus: maritalStatus || person.familyDetails.maritalStatus,
           height: {
-              feet: height?.feet || person.familyDetails?.height?.feet,
-              inches: height?.inches || person.familyDetails?.height?.inches,
+              feet: heightFeet || person.familyDetails?.heightFeet,
+              inches: heightInches || person.familyDetails?.heightInches,
           },
           familyStatus: familyStatus || person.familyDetails.familyStatus,
           familyType: familyType || person.familyDetails.familyType,

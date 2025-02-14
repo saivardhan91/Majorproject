@@ -1,7 +1,13 @@
 import React, { useState } from "react";
-import { Box, Button, TextField, Select, MenuItem, FormControl, InputLabel, RadioGroup, FormControlLabel, Radio, Typography, Checkbox } from "@mui/material";
+import {
+  Box, Button, TextField, Select, MenuItem, FormControl,
+  InputLabel, RadioGroup, FormControlLabel, Radio, Typography
+} from "@mui/material";
 import Navbar from "./Navbar";
+
 const SearchForm = () => {
+  const [searchType, setSearchType] = useState("profiles"); // "profiles" (default) or "profile"
+  const [profileSuggestions, setProfileSuggestions] = useState([]); // Suggestions for Profile Search
   const [searchParams, setSearchParams] = useState({
     lookingFor: "Bride",
     ageMin: "",
@@ -9,144 +15,168 @@ const SearchForm = () => {
     heightMin: "",
     heightMax: "",
     maritalStatus: "",
-    haveChildren: "Doesn't Matter",
+    haveChildren: "No",
     religion: "",
+    caste: "", // Added Caste Field
     motherTongue: "",
     country: "",
-    visibleToAll: false,
-    protectedPhoto: false,
+    profileId: "",
   });
 
+  // Handle Input Change
   const handleChange = (event) => {
-    setSearchParams({ ...searchParams, [event.target.name]: event.target.value });
+    const { name, value } = event.target;
+    setSearchParams({ ...searchParams, [name]: value });
+
+    // Fetch profile suggestions dynamically (Mock example)
+    if (name === "profileId") {
+      setProfileSuggestions(
+        ["P1234", "P5678", "P91011"].filter((id) => id.includes(value))
+      );
+    }
+  };
+
+  // Reset Form
+  const handleReset = () => {
+    setSearchParams({
+      lookingFor: "Bride",
+      ageMin: "",
+      ageMax: "",
+      heightMin: "",
+      heightMax: "",
+      maritalStatus: "",
+      haveChildren: "No",
+      religion: "",
+      caste: "", // Reset Caste Field
+      motherTongue: "",
+      country: "",
+      profileId: "",
+    });
+    setProfileSuggestions([]);
   };
 
   return (
     <Box sx={{ bgcolor: "#f8f9fa", minHeight: "100vh" }}>
-        <Navbar />
-    <Box sx={{ p: 3, backgroundColor: "#fff", borderRadius: 2, boxShadow: 3, maxWidth: 500, mx: "auto",marginTop:3 }}>
-      <Typography variant="h6" sx={{ mb: 2, textAlign: "center", fontWeight: "bold" }}>Search Profiles</Typography>
+      <Navbar />
+      <Box sx={{ p: 3, backgroundColor: "#fff", borderRadius: 2, boxShadow: 3, maxWidth: 500, mx: "auto", marginTop: 3 }}>
+        <Typography variant="h6" sx={{ mb: 2, textAlign: "center", fontWeight: "bold" }}>
+          Search Profiles
+        </Typography>
 
-      {/* Looking For */}
-      <FormControl fullWidth sx={{ mb: 2 }}>
-        <Typography variant="body1">Looking for:</Typography>
-        <RadioGroup row name="lookingFor" value={searchParams.lookingFor} onChange={handleChange}>
-          <FormControlLabel value="Bride" control={<Radio />} label="Bride" />
-          <FormControlLabel value="Groom" control={<Radio />} label="Groom" />
-        </RadioGroup>
-      </FormControl>
+        {/* Search Type Selection */}
+        <FormControl fullWidth sx={{ mb: 2 }}>
+          <Typography variant="body1">Search Type:</Typography>
+          <RadioGroup row value={searchType} onChange={(e) => setSearchType(e.target.value)}>
+            <FormControlLabel value="profile" control={<Radio />} label="Profile Search" />
+            <FormControlLabel value="profiles" control={<Radio />} label="Profiles Search" />
+          </RadioGroup>
+        </FormControl>
 
-      {/* Age Range */}
-      <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-        <FormControl fullWidth>
-          {/* <InputLabel>Min Age</InputLabel> */}
-          <Select name="ageMin" value={searchParams.ageMin} onChange={handleChange} displayEmpty>
-            <MenuItem value="" disabled>Select Min Age</MenuItem>
-            {[...Array(41)].map((_, i) => (
-              <MenuItem key={i} value={i + 18}>{i + 18}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl fullWidth>
-          {/* <InputLabel>Max Age</InputLabel> */}
-          <Select name="ageMax" value={searchParams.ageMax} onChange={handleChange} displayEmpty>
-            <MenuItem value="" disabled>Select Max Age</MenuItem>
-            {[...Array(41)].map((_, i) => (
-              <MenuItem key={i} value={i + 18}>{i + 18}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        {/* Profile Search (by ID) */}
+        {searchType === "profile" ? (
+          <FormControl fullWidth sx={{ mb: 2 }}>
+            <TextField
+              label="Profile ID"
+              name="profileId"
+              value={searchParams.profileId}
+              onChange={handleChange}
+            />
+            {profileSuggestions.length > 0 && (
+              <Box sx={{ bgcolor: "#f1f1f1", mt: 1, p: 1, borderRadius: 1 }}>
+                {profileSuggestions.map((suggestion) => (
+                  <Typography
+                    key={suggestion}
+                    sx={{ cursor: "pointer", "&:hover": { bgcolor: "#ddd" }, p: 1 }}
+                    onClick={() => setSearchParams({ ...searchParams, profileId: suggestion })}
+                  >
+                    {suggestion}
+                  </Typography>
+                ))}
+              </Box>
+            )}
+          </FormControl>
+        ) : (
+          <>
+            {/* Looking for Bride/Groom */}
+            <FormControl fullWidth sx={{ mb: 2 }}>
+              <Typography variant="body1">Looking for:</Typography>
+              <RadioGroup row name="lookingFor" value={searchParams.lookingFor} onChange={handleChange}>
+                <FormControlLabel value="Bride" control={<Radio />} label="Bride" />
+                <FormControlLabel value="Groom" control={<Radio />} label="Groom" />
+              </RadioGroup>
+            </FormControl>
+
+            {/* Age Range */}
+            <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+              <FormControl fullWidth>
+                <InputLabel>Min Age</InputLabel>
+                <Select name="ageMin" value={searchParams.ageMin} onChange={handleChange}>
+                  {[...Array(41)].map((_, i) => (
+                    <MenuItem key={i} value={i + 18}>{i + 18}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl fullWidth>
+                <InputLabel>Max Age</InputLabel>
+                <Select name="ageMax" value={searchParams.ageMax} onChange={handleChange}>
+                  {[...Array(41)].map((_, i) => (
+                    <MenuItem key={i} value={i + 18}>{i + 18}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+
+            {/* Marital Status */}
+            <FormControl fullWidth sx={{ mb: 2 }}>
+              <InputLabel>Marital Status</InputLabel>
+              <Select name="maritalStatus" value={searchParams.maritalStatus} onChange={handleChange}>
+                <MenuItem value="Single">Single</MenuItem>
+                <MenuItem value="Divorced">Divorced</MenuItem>
+              </Select>
+            </FormControl>
+
+            {/* Religion */}
+            <FormControl fullWidth sx={{ mb: 2 }}>
+              <InputLabel>Religion</InputLabel>
+              <Select name="religion" value={searchParams.religion} onChange={handleChange}>
+                <MenuItem value="Hindu">Hindu</MenuItem>
+                <MenuItem value="Muslim">Muslim</MenuItem>
+                <MenuItem value="Christian">Christian</MenuItem>
+              </Select>
+            </FormControl>
+
+            {/* Caste (Added) */}
+            <FormControl fullWidth sx={{ mb: 2 }}>
+              <TextField
+                label="Caste"
+                name="caste"
+                value={searchParams.caste}
+                onChange={handleChange}
+              />
+            </FormControl>
+
+            {/* Country */}
+            <FormControl fullWidth sx={{ mb: 2 }}>
+              <TextField
+                label="Country"
+                name="country"
+                value={searchParams.country}
+                onChange={handleChange}
+              />
+            </FormControl>
+          </>
+        )}
+
+        {/* Buttons */}
+        <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mt: 2 }}>
+          <Button variant="contained" color="primary" sx={{ px: 4 }}>
+            Search
+          </Button>
+          <Button variant="outlined" color="secondary" onClick={handleReset}>
+            Reset
+          </Button>
+        </Box>
       </Box>
-
-      {/* Height Range */}
-      <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-        <FormControl fullWidth>
-          {/* <InputLabel>Min Height</InputLabel> */}
-          <Select name="heightMin" value={searchParams.heightMin} onChange={handleChange} displayEmpty>
-            <MenuItem value="" disabled>Select Min Height</MenuItem>
-            <MenuItem value="134cm">4'5" - 134cm</MenuItem>
-            <MenuItem value="140cm">4'7" - 140cm</MenuItem>
-            <MenuItem value="150cm">4'11" - 150cm</MenuItem>
-          </Select>
-        </FormControl>
-        <FormControl fullWidth>
-          {/* <InputLabel>Max Height</InputLabel> */}
-          <Select name="heightMax" value={searchParams.heightMax} onChange={handleChange} displayEmpty>
-            <MenuItem value="" disabled>Select Max Height</MenuItem>
-            <MenuItem value="170cm">5'7" - 170cm</MenuItem>
-            <MenuItem value="180cm">5'11" - 180cm</MenuItem>
-            <MenuItem value="213cm">7' - 213cm</MenuItem>
-          </Select>
-        </FormControl>
-      </Box>
-
-      {/* Marital Status */}
-      <FormControl fullWidth sx={{ mb: 2 }}>
-        {/* <InputLabel>Marital Status</InputLabel> */}
-        <Select name="maritalStatus" value={searchParams.maritalStatus} onChange={handleChange} displayEmpty>
-          <MenuItem value="" disabled>Select Marital Status</MenuItem>
-          <MenuItem value="Single">Single</MenuItem>
-          <MenuItem value="Divorced">Divorced</MenuItem>
-        </Select>
-      </FormControl>
-
-      {/* Have Children */}
-      <FormControl fullWidth sx={{ mb: 2 }}>
-        <Typography variant="body1">Have Children:</Typography>
-        <RadioGroup row name="haveChildren" value={searchParams.haveChildren} onChange={handleChange}>
-          <FormControlLabel value="Doesn't Matter" control={<Radio />} label="Doesn't Matter" />
-          <FormControlLabel value="No" control={<Radio />} label="No" />
-        </RadioGroup>
-      </FormControl>
-
-      {/* Religion */}
-      <FormControl fullWidth sx={{ mb: 2 }}>
-        {/* <InputLabel>Religion</InputLabel> */}
-        <Select name="religion" value={searchParams.religion} onChange={handleChange} displayEmpty>
-          <MenuItem value="" disabled>Select Religion</MenuItem>
-          <MenuItem value="Hindu">Hindu</MenuItem>
-          <MenuItem value="Muslim">Muslim</MenuItem>
-          <MenuItem value="Christian">Christian</MenuItem>
-        </Select>
-      </FormControl>
-
-      {/* Mother Tongue */}
-      <FormControl fullWidth sx={{ mb: 2 }}>
-        {/* <InputLabel>Mother Tongue</InputLabel> */}
-        <Select name="motherTongue" value={searchParams.motherTongue} onChange={handleChange} displayEmpty>
-          <MenuItem value="" disabled>Select Mother Tongue</MenuItem>
-          <MenuItem value="Telugu">Telugu</MenuItem>
-          <MenuItem value="Hindi">Hindi</MenuItem>
-        </Select>
-      </FormControl>
-
-      {/* Country */}
-      <FormControl fullWidth sx={{ mb: 2 }}>
-        {/* <InputLabel>Country Living In</InputLabel> */}
-        <Select name="country" value={searchParams.country} onChange={handleChange} displayEmpty>
-          <MenuItem value="" disabled>Select Country</MenuItem>
-          <MenuItem value="India">India</MenuItem>
-          <MenuItem value="USA">USA</MenuItem>
-        </Select>
-      </FormControl>
-
-      {/* Search Button */}
-      <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
-        <Button variant="contained" color="primary" sx={{ px: 4 }}>Search</Button>
-        <Button variant="outlined" color="secondary" onClick={() => setSearchParams({
-          lookingFor: "Bride",
-          ageMin: "",
-          ageMax: "",
-          heightMin: "",
-          heightMax: "",
-          maritalStatus: "",
-          haveChildren: "Doesn't Matter",
-          religion: "",
-          motherTongue: "",
-          country: "",
-        })}>Reset</Button>
-      </Box>
-    </Box>
     </Box>
   );
 };

@@ -6,59 +6,77 @@ const User = require("../Model/loginschema");
 const router = express.Router();
 
 class UserController {
+    constructor() {
+        this.generateAccId = this.generateAccId.bind(this);
+        this.Register = this.Register.bind(this);
+    }
+
+    async generateAccId() {
+        try {
+            const lastUser = await User.findOne().sort({ accId: -1 });
+
+            if (!lastUser || !lastUser.accId) {
+                return "T0000001"; // Start from T0000001 if no user exists
+            }
+
+            const lastAccId = lastUser.accId;
+            const numericPart = parseInt(lastAccId.substring(1)) + 1;
+            const newAccId = `T${numericPart.toString().padStart(7, "0")}`;
+
+            return newAccId;
+        } catch (error) {
+            console.error("Error generating accId:", error);
+            return "T0000001"; // Fallback if error occurs
+        }
+    }
+
     async Register(req, res) {
         try {
             const { name, email, password } = req.body;
 
-            // Input validation
             if (!name || !email || !password) {
                 return res.status(400).json({ error: "All fields are required" });
             }
 
-            // Email format validation
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
                 return res.status(400).json({ error: "Invalid email format" });
             }
 
-            // Check if user already exists
             const existingUser = await User.findOne({ email });
             if (existingUser) {
                 return res.status(400).json({ error: "Email already in use" });
             }
 
-            // Hash the password before storing
+            // ✅ Fix: Use "this.generateAccId()"
+            const accId = await this.generateAccId();
+             console.log(accId);
             const salt = await bcrypt.genSalt(10);
             const hashedPassword = await bcrypt.hash(password, salt);
 
-            // Create new user
             const newUser = new User({
                 name,
                 email,
-                password: hashedPassword
+                password: hashedPassword,
+                accId
             });
 
-            // Save user to database
             await newUser.save();
 
             const tokenPayload = {
                 userId: newUser._id,
                 email: newUser.email
             };
-            
-            const token = jwt.sign(
-                tokenPayload,
-                process.env.JSON_WEB_SIGN,
-                { expiresIn: '24h' }
-            );
 
-            // Send response
+            const token = jwt.sign(tokenPayload, process.env.JSON_WEB_SIGN, { expiresIn: "24h" });
+
             res.json({
                 message: "Registration successful",
                 user: {
                     id: newUser._id,
                     name: newUser.name,
-                    email: newUser.email
+                    email: newUser.email,
+                    accId: newUser.accId
                 },
                 token
             });
@@ -67,7 +85,7 @@ class UserController {
             res.status(500).json({ error: "Internal server error" });
         }
     }
-
+    
     async Login(req, res) {
         try {
             const { email, password } = req.body;

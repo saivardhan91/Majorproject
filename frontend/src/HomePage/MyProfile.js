@@ -1,125 +1,87 @@
-import React from "react";
-import { Box, Typography, Card, Avatar, Button, Grid, CircularProgress,CardContent } from "@mui/material";
-import { PhotoCamera, Visibility } from "@mui/icons-material";
-import EditIcon from "@mui/icons-material/Edit";
+import React, { useState, useEffect } from "react";
+import { 
+  Box, Typography, Card, Avatar, Button, Grid, CardContent, Dialog 
+} from "@mui/material";
 import Navbar from "./Navbar";
+import axios from "axios";
+import { useAuth } from "../routes/AuthContex";
+import EditPersonal from '../ProfileEdits/EditPersonal';
+import EditBasicDetails from '../ProfileEdits/EditBasicDetails';
+import EditReligion from '../ProfileEdits/EditReligion';
+import EditGroomLocation from "../ProfileEdits/EditGroomLocation";
+import EditprofessionalInfo from '../ProfileEdits/EditProfessionalInfo';
+import EditPhoto from '../ProfileEdits/EditPhoto';
+
 const ProfilePage = () => {
+  const auth = useAuth();
+  const [user, setUser] = useState({});
+  const [openPhotoModal, setOpenPhotoModal] = useState(false); // State to control EditPhoto modal
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!auth?.user?.id) return; 
+
+      try {
+        const response = await axios.get(`http://localhost:5000/get-form/${auth.user.id}`);
+        setUser(response?.data?.data);
+        console.log("Fetched User:", response?.data?.data);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, [auth?.user?.id]);
+
+  // Function to open the EditPhoto modal
+  const handleOpenPhoto = () => {
+    setOpenPhotoModal(true);
+  };
+
   return (
     <Box sx={{ bgcolor: "#f8f9fa", minHeight: "100vh" }}>
       <Navbar />
-    <Box sx={{ padding: 3, maxWidth: 1000, margin: "auto", bgcolor: "#f5f5f5",mt:2 }}>
-      {/* Profile Section */}
-      <Grid item xs={12} md={8}>
+      <Box sx={{ padding: 3, maxWidth: 1000, margin: "auto", bgcolor: "#f5f5f5", mt: 2 }}>
+        {/* Profile Section */}
+        <Grid item xs={12} md={8}>
           <Card>
             <CardContent>
               <Grid container spacing={2} alignItems="center">
                 <Grid item>
-                  <Avatar sx={{ width: 80, height: 80 }} />
+                  <Avatar sx={{ width: 80, height: 80 }} src={user?.image} />
                 </Grid>
                 <Grid item>
-                  <Typography variant="h6">Gulla Chinnu</Typography>
-                  <Typography variant="body2">21 Yrs, 5 Ft 8 In / 173 Cms</Typography>
-                  <Typography variant="body2">Hyderabad, Telangana, India</Typography>
-                  <Typography variant="body2">B.Tech., Software Professional</Typography>
+                  <Typography variant="h6">{user?.name}</Typography>
+                  <Typography variant="body2">
+                    {user?.familyDetails?.height?.feet} Ft / {user?.familyDetails?.height?.inches} In
+                  </Typography>
+                  <Typography variant="body2">
+                    {user?.professionalDetails?.workLocation}, {user?.professionalDetails?.state}, {user?.professionalDetails?.country}
+                  </Typography>
+                  <Typography variant="body2">
+                    {user?.professionalDetails?.highestEducation}, {user?.professionalDetails?.occupation}
+                  </Typography>
                 </Grid>
               </Grid>
-              <Button variant="contained" sx={{ mt: 2 }}>Add/Edit Photos</Button>
-            </CardContent>
-          </Card>
-
-          {/* Photos Upload Section
-          <Card sx={{ mt: 2, backgroundColor: "#e3f2fd" }}>
-            <CardContent>
-              <Typography variant="body1">
-                Photos are the first thing that prospects look at.
-              </Typography>
-              <Button variant="contained" color="primary" sx={{ mt: 1 }}>
-                Upload Photos Now
+              <Button variant="contained" sx={{ mt: 2 }} onClick={handleOpenPhoto}>
+                Add/Edit Photos
               </Button>
             </CardContent>
-          </Card> */}
-
-          {/* Personal Information Section */}
-          <Card sx={{ mt: 2 }}>
-            <CardContent>
-              <Box display="flex" justifyContent="space-between" alignItems="center">
-                <Typography variant="h6" color="green">Personal Information</Typography>
-                <Button startIcon={<EditIcon />} size="small">Edit</Button>
-              </Box>
-              <Typography variant="body2" sx={{ mt: 1 }}>
-                I completed my bachelor's degree and am now working as a software professional.
-              </Typography>
-            </CardContent>
           </Card>
 
-          {/* Basic Details Section */}
-          <Card sx={{ mt: 2 }}>
-            <CardContent>
-              <Box display="flex" justifyContent="space-between" alignItems="center">
-                <Typography variant="h6">Basic Details</Typography>
-                <Button startIcon={<EditIcon />} size="small">Edit</Button>
-              </Box>
-              <Grid container spacing={2} sx={{ mt: 1 }}>
-                <Grid item xs={6}><Typography variant="body2">Profile created for: My Self</Typography></Grid>
-                <Grid item xs={6}><Typography variant="body2">Name: Gulla Chinnu</Typography></Grid>
-                <Grid item xs={6}><Typography variant="body2">Age: 21 Years</Typography></Grid>
-                <Grid item xs={6}><Typography variant="body2">Height: 5 Ft 8 In / 173 Cms</Typography></Grid>
-                <Grid item xs={6}><Typography variant="body2">Marital Status: Never Married</Typography></Grid>
-                <Grid item xs={6}><Typography variant="body2">Mother Tongue: Telugu</Typography></Grid>
-              </Grid>
-            </CardContent>
-          </Card>
-           {/* Religion Information */}
-        <Card sx={{ mt: 2 }}>
-          <CardContent>
-            <Box display="flex" justifyContent="space-between" alignItems="center">
-              <Typography variant="h6">Religion Information</Typography>
-              <Button startIcon={<EditIcon />} size="small">Edit</Button>
-            </Box>
-            <Grid container spacing={2} sx={{ mt: 1 }}>
-                <Grid item xs={6}><Typography variant="body2">Religion: Hindu</Typography></Grid>
-                <Grid item xs={6}><Typography variant="body2">Caste/Sub Caste:---</Typography></Grid>
-                
-              </Grid>
-          </CardContent>
-        </Card>
         
-        {/* Groom's Location */}
-        <Card sx={{ mt: 2 }}>
-          <CardContent>
-            <Box display="flex" justifyContent="space-between" alignItems="center">
-              <Typography variant="h6">Groom's Location</Typography>
-              <Button startIcon={<EditIcon />} size="small">Edit</Button>
-            </Box>
-            
-            <Grid container spacing={2} sx={{ mt: 1 }}>
-                <Grid item xs={6}><Typography variant="body2">Country: India</Typography></Grid>
-                <Grid item xs={6}><Typography variant="body2">State: Telangana</Typography></Grid>
-                <Grid item xs={6}><Typography variant="body2">City: Hyderabad</Typography></Grid>
-                <Grid item xs={6}><Typography variant="body2">Citizenship: India</Typography></Grid>
-              </Grid>
-          </CardContent>
-        </Card>
-        
-        {/* Professional Information */}
-        <Card sx={{ mt: 2 }}>
-          <CardContent>
-            <Box display="flex" justifyContent="space-between" alignItems="center">
-              <Typography variant="h6">Professional Information</Typography>
-              <Button startIcon={<EditIcon />} size="small">Edit</Button>
-            </Box>
+          <Dialog open={openPhotoModal} onClose={() => setOpenPhotoModal(false)}>
+            <EditPhoto onClose={() => setOpenPhotoModal(false)} />
+          </Dialog>
 
-            <Grid container spacing={2} sx={{ mt: 1 }}>
-                <Grid item xs={6}><Typography variant="body2">Education: B.Tech.</Typography></Grid>
-                <Grid item xs={6}><Typography variant="body2">Employed in: Private Sector</Typography></Grid>
-                <Grid item xs={6}><Typography variant="body2">Occupation: Software Professional</Typography></Grid>
-                
-              </Grid>
-          </CardContent>
-        </Card>
+          {/* Profile Edit Sections */}
+          <EditPersonal />
+          <EditBasicDetails />
+          <EditReligion user={user} setUser={setUser} />
+          <EditGroomLocation user={user} setUser={setUser} />
+          <EditprofessionalInfo user={user} setUser={setUser} />
         </Grid>
-      
-    </Box>
+      </Box>
     </Box>
   );
 };

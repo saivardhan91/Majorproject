@@ -12,6 +12,7 @@ const personSchema = new mongoose.Schema({
   // ✅ Profile Bio & Image Storage
   bio: { type: String, maxlength: 200 }, // Limit bio length to 200 characters
   image: { type: String }, // Store Base64 image string
+   
 
   professionalDetails: {
     highestEducation: { type: String },
@@ -20,7 +21,7 @@ const personSchema = new mongoose.Schema({
     annualIncome: { type: String },
     workLocation: { type: String },
     state: { type: String },
-    city: { type: String },
+    country: { type: String },
   },
 
   familyDetails: {

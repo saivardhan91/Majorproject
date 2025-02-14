@@ -46,24 +46,33 @@ const ProfileForm = () => {
   };
 
   // ✅ Function to send data to the backend
+  
   const handleSaveProfile = async () => {
-    const userId=auth.user.id;
+    const userId = auth.user.id;
     try {
       const response = await axios.post("http://localhost:5000/ProfileImage", {
         userId,
         bio,
         image, // Sending Base64 image
       });
-
+  
       if (response.status === 201) {
         toast.success("Profile saved successfully! 🎉");
-        navigate("/Home"); 
+  
+        // Clear form fields for the next register
+        setImage(null);
+        setBio("");
+        localStorage.removeItem("profileImage");
+        localStorage.removeItem("userBio");
+  
+        navigate("/Home");
       }
     } catch (error) {
       toast.error("Error saving profile! ❌");
       console.error("Error:", error);
     }
   };
+  
 
   return (
     <Box

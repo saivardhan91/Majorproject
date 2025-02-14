@@ -16,6 +16,9 @@ import NotificationCard from "./HomePage/Notification";
 import MyProfile from './HomePage/MyProfile'
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Preferences from './HomePage/Preferences';
+import Settings from "./HomePage/Settings";
+import DeleteAccount from "./HomePage/DeleteAccount";
 function AppContent() {
   return (
     <AuthProvider>
@@ -33,12 +36,15 @@ function AppContent() {
           <Route path="/register/ProfessionalDetails" element={<ProfessionalDetailsForm />} />
           <Route path="/register/PhotoDetails" element={<Photodetails />} />
           <Route path="/Home" element={<HomePage />} />
-          <Route path='/Profile' element={<Profile/>}/>
+          <Route path='/Profile/:userId' element={<Profile/>}/>
           <Route path='/Matches' element={<Matches/>}/>
           <Route path='/Search' element={<Search/>}/>
           <Route path='/Favorites' element={<ShortList/>}/>
           <Route path='/Notification' element={<NotificationCard/>}/>
           <Route path='/MyProfile' element={<MyProfile/>}/>
+          <Route path='/preferences' element={<Preferences/>}/>
+          <Route path='/settings' element={<Settings/>}/>
+          {/* <Route path='/deleteAccount' element={<DeleteAccount/>}/> */}
           {/* Add Protected Routes Here */}
         </Routes>
       </div>

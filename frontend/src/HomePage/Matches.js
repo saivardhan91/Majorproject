@@ -10,7 +10,8 @@ import {
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import Navbar from "./Navbar";
-
+import Profile from './profile';
+import { useNavigate } from "react-router-dom";
 const profiles = [
   { id: 1, name: "Aisha Sharma", age: 29, height: "5'7", gender: "Female", languages: "Hindi, English, Tamil", location: "Chennai", photo: "https://randomuser.me/api/portraits/women/1.jpg" },
   { id: 2, name: "Pooja Verma", age: 27, height: "5'6", gender: "Female", languages: "Hindi, English, Kannada", location: "Hyderabad", photo: "https://randomuser.me/api/portraits/women/2.jpg" },
@@ -33,12 +34,16 @@ const profiles = [
 
 const profilesPerPage = 8;
 
+
 const MatrimonialProfiles = () => {
   const [page, setPage] = useState(1);
   const startIndex = (page - 1) * profilesPerPage;
   const selectedProfiles = profiles.slice(startIndex, startIndex + profilesPerPage);
   const totalPages = Math.ceil(profiles.length / profilesPerPage);
-
+  const navigate=useNavigate();
+  const handleViewProfile = (profile) => {
+    navigate(`/profile/${profile.id}`, { state: { profile } }); // Pass data via state
+  };
   return (
     <Box sx={{ bgcolor: "#f8f9fa", minHeight: "100vh" }}>
       <Navbar />
@@ -73,7 +78,11 @@ const MatrimonialProfiles = () => {
                     {profile.location}
                   </Typography>
                 </Box>
-                <Button variant="contained" sx={{ mt: 2, background: "linear-gradient(45deg, #FF4081, #FF9800)" }}>
+                <Button
+                  variant="contained"
+                  sx={{ mt: 2, background: "linear-gradient(45deg, #FF4081, #FF9800)" }}
+                  onClick={() => handleViewProfile(profile)}
+                >
                   View Profile
                 </Button>
               </Box>

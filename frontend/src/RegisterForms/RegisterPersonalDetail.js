@@ -18,8 +18,10 @@ const AboutForm = () => {
   const navigate=useNavigate();
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
+  
 
   const handleSubmit = async(e) => {
     e.preventDefault();
@@ -60,7 +62,7 @@ const AboutForm = () => {
         <FormControl fullWidth>
           <Select name="maritalStatus" value={formData.maritalStatus} onChange={handleChange} displayEmpty>
             <MenuItem value="" disabled>Select Marital Status</MenuItem>
-            <MenuItem value="Never Married">Never Married</MenuItem>
+            <MenuItem value="Never Married">Single</MenuItem>
             <MenuItem value="Widowed">Widowed</MenuItem>
             <MenuItem value="Divorced">Divorced</MenuItem>
             <MenuItem value="Awaiting Divorce">Awaiting Divorce</MenuItem>
@@ -68,23 +70,23 @@ const AboutForm = () => {
         </FormControl>
 
         <Box sx={{ display: "flex", gap: 2 }}>
-          <FormControl fullWidth>
-            <Select name="heightFeet" value={formData.heightFeet} onChange={handleChange} displayEmpty>
-              <MenuItem value="" disabled>Select Feet</MenuItem>
-              {[...Array(8)].map((_, i) => (
-                <MenuItem key={i} value={i + 3}>{i + 3} ft</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+        <FormControl fullWidth>
+        <Select name="heightFeet" value={formData.heightFeet || ""} onChange={handleChange} displayEmpty>
+          <MenuItem value="" disabled>Select Feet</MenuItem>
+          {[...Array(8)].map((_, i) => (
+            <MenuItem key={i} value={i + 3}>{i + 3} ft</MenuItem>
+          ))}
+        </Select>
+      </FormControl>
 
-          <FormControl fullWidth>
-            <Select name="heightInches" value={formData.heightInches} onChange={handleChange} displayEmpty>
-              <MenuItem value="" disabled>Select Inches</MenuItem>
-              {[...Array(12)].map((_, i) => (
-                <MenuItem key={i} value={i}>{i} in</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+      <FormControl fullWidth>
+        <Select name="heightInches" value={formData.heightInches || ""} onChange={handleChange} displayEmpty>
+          <MenuItem value="" disabled>Select Inches</MenuItem>
+          {[...Array(12)].map((_, i) => (
+            <MenuItem key={i} value={i}>{i} in</MenuItem>
+          ))}
+        </Select>
+      </FormControl>
         </Box>
 
         <FormControl fullWidth>

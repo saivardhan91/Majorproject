@@ -1,14 +1,15 @@
 import React, { useState } from "react";
-import { Grid, Box, Typography, TextField, Button } from "@mui/material";
+import { Grid, Box, Typography, TextField, Button, IconButton, InputAdornment } from "@mui/material";
 import { useAuth } from "../routes/AuthContex"; // Import useAuth
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 const Register = () => {
   const [formData, setFormData] = useState({ name: "", email: "", password: "" });
   const [error, setError] = useState("");
   const { signup } = useAuth(); // Get signup function from context
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setError(""); // Clear error on input change
@@ -69,17 +70,26 @@ const Register = () => {
               value={formData.email} 
               required
             />
-            <TextField 
-              label="Password" 
-              name="password" 
-              type="password" 
-              variant="outlined" 
-              fullWidth 
-              sx={{ mb: 2 }} 
-              onChange={handleChange} 
-              value={formData.password} 
-              required
-            />
+             <TextField 
+            label="Password" 
+            name="password" 
+            type={showPassword ? "text" : "password"} 
+            variant="outlined" 
+            fullWidth 
+            sx={{ mb: 2 }} 
+            onChange={handleChange} 
+            value={formData.password} 
+            required
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
             
             {/* Error message area */}
             <Typography 
