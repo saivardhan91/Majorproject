@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import { Container, Typography, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
-
+import { useAuth } from "../routes/AuthContex";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 const DeleteAccount = () => {
+  const navigate=useNavigate();
+  const auth=useAuth();
+
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
@@ -11,9 +16,22 @@ const DeleteAccount = () => {
   const handleClose = () => {
     setOpen(false);
   };
+  const userId= auth?.user?.id;
+  console.log(userId);
+  const handleDelete = async () => {
+    try {
+      
+      const res=await axios.delete(`http://localhost:5000/delete-account?userId=${userId}`
+    );
+      console.log(res.data);
+      // Clear user data and navigate to register page
+      localStorage.removeItem("token");
+      navigate("/register");
 
-  const handleDelete = () => {
-    console.log("Account deleted");
+      console.log("Account deleted successfully");
+    } catch (error) {
+      console.error("Error deleting account:", error);
+    }
     setOpen(false);
   };
 

@@ -4,6 +4,8 @@ const personSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // Link to the logged-in user
   name: { type: String, required: true },
   dob: { type: String, required: true },
+  age:{type:String},
+  gender:{type:String,required:true},
   religion: { type: String, required: true },
   caste: { type: String, required: true },
   subCaste: { type: String },
@@ -37,4 +39,6 @@ const personSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("Person", personSchema);
+
+ const Person= mongoose.model("Person", personSchema);
+ module.exports=Person;

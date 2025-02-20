@@ -3,31 +3,55 @@ import { TextField, MenuItem, Select, FormControl, InputLabel, Button, Box, Typo
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../routes/AuthContex";
+
 const FormComponent = () => {
-  const auth=useAuth();
+  const auth = useAuth();
   console.log(auth);
+
   const [formData, setFormData] = useState({
-    userId:auth.user.id,
-    name:auth.user.name,
+    userId: auth.user.id,
+    name: auth.user.name,
     dob: "",
+    age: "",
+    gender: "",
     religion: "",
     caste: "",
     subCaste: "",
     motherTongue: "",
   });
- const navigate =useNavigate();
+
+  const navigate = useNavigate();
   const religions = ["Hindu", "Muslim", "Christian", "Sikh", "Others"];
   const motherTongues = ["Telugu", "Hindi", "Tamil", "Kannada", "Malayalam", "Others"];
+  const genders = ["Male", "Female", "Other"];
+
+  const calculateAge = (dob) => {
+    const birthDate = new Date(dob);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
+  };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    
+    if (name === "dob") {
+      setFormData({ ...formData, dob: value, age: calculateAge(value) });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res= await axios.post('http://localhost:5000/submit-form',formData);
+    const res = await axios.post("http://localhost:5000/submit-form", formData);
     console.log(res.data);
-    navigate('/register/RegisterPersonalDetails');
+    navigate("/register/RegisterPersonalDetails");
     console.log("Form Submitted:", formData);
   };
 
@@ -69,8 +93,30 @@ const FormComponent = () => {
           fullWidth
         />
 
+        <TextField
+          label="Age"
+          name="age"
+          value={formData.age}
+          disabled
+          fullWidth
+        />
+
         <FormControl fullWidth>
-         
+          <Select
+            name="gender"
+            value={formData.gender}
+            onChange={handleChange}
+            displayEmpty
+            sx={{ backgroundColor: "#fff" }}
+          >
+            <MenuItem value="" disabled>Select Gender</MenuItem>
+            {genders.map((gender) => (
+              <MenuItem key={gender} value={gender}>{gender}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        <FormControl fullWidth>
           <Select
             name="religion"
             value={formData.religion}
@@ -89,7 +135,6 @@ const FormComponent = () => {
         <TextField label="Sub Caste" name="subCaste" value={formData.subCaste} onChange={handleChange} fullWidth />
 
         <FormControl fullWidth>
-          
           <Select
             name="motherTongue"
             value={formData.motherTongue}

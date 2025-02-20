@@ -1,22 +1,28 @@
 import React, { useState } from "react";
 import { Container, TextField, Button, Typography, Box, Checkbox, FormControlLabel } from "@mui/material";
-
+import axios from 'axios';
+import { useAuth } from "../routes/AuthContex";
 const ChangePassword = () => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-
+const auth=useAuth();
   const handleTogglePassword = () => {
     setShowPassword(!showPassword);
   };
-
-  const handleSubmit = (e) => {
+ const userId=auth?.user?.id;
+  const handleSubmit = async(e) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
       alert("New passwords do not match");
       return;
     }
+    const res=await axios.post("http://localhost:5000/change-password",
+      { userId,currentPassword, newPassword }
+      
+    )
+    alert(res.data.message);
     console.log("Password changed successfully");
   };
 

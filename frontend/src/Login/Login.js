@@ -1,15 +1,19 @@
 import React, { useState } from "react";
-import { Box, Typography, TextField, Button } from "@mui/material";
+import { Box, Typography, TextField, Button, IconButton, InputAdornment } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useAuth } from "../routes/AuthContex";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+
 export default function Login() {
     const [formData, setFormData] = useState({ email: "", password: "" });
     const [error, setError] = useState("");
-    const { login } = useAuth();  // Destructure login from useAuth
-    const navigate =useNavigate();
+    const [showPassword, setShowPassword] = useState(false);
+    const { login } = useAuth();
+    const navigate = useNavigate();
+
     const handleChange = (e) => {
-        setError("");  // Clear error on input change
+        setError("");
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
@@ -23,14 +27,13 @@ export default function Login() {
         } catch (err) {
             toast.error("Login Failed! ❌");
             setError(err.toString());
-            
         }
     };
 
     return (
         <Box
-            component="form"  // Added form component
-            onSubmit={handleSubmit}  // Moved to form submit
+            component="form"
+            onSubmit={handleSubmit}
             sx={{
                 position: "absolute",
                 top: "50%",
@@ -68,12 +71,21 @@ export default function Login() {
                 label="Password"
                 name="password"
                 variant="outlined"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 fullWidth
                 sx={{ mb: 2 }}
                 onChange={handleChange}
                 value={formData.password}
                 required
+                InputProps={{
+                    endAdornment: (
+                        <InputAdornment position="end">
+                            <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                                {showPassword ? <Visibility />: <VisibilityOff />}
+                            </IconButton>
+                        </InputAdornment>
+                    ),
+                }}
             />
 
             <Typography

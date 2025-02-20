@@ -6,7 +6,7 @@ const router = express.Router();
 class FormController {
   async normalDetails(req, res)  {
     try {
-        const { userId, name, dob, religion, caste, subCaste, motherTongue } = req.body;
+        const { userId, name, dob,age,gender, religion, caste, subCaste, motherTongue } = req.body;
 
         if (!userId) {
             return res.status(400).json({ error: "User ID is required" });
@@ -15,10 +15,12 @@ class FormController {
         let person = await Person.findOne({ userId });
 
         if (!person) {
-            person = new Person({ userId, name, dob, religion, caste, subCaste, motherTongue });
+            person = new Person({ userId, name, dob,age,gender, religion, caste, subCaste, motherTongue });
         } else {
             person.name = name;
             person.dob = dob;
+            person.age=age;
+            person.gender=gender;
             person.religion = religion;
             person.caste = caste;
             person.subCaste = subCaste;

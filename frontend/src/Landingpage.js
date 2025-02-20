@@ -16,11 +16,22 @@ import {
 import bg from '../src/images/bg_lp.webp';
 import Register from './Login/Register';
 import Login from './Login/Login';
+const matches = [
+  { name: "M Bala Shivangini", age: "21 Yrs", height: "5'0", img: "https://assets.entrepreneur.com/content/3x2/2000/20150820205507-single-man-outdoors-happy-bliss.jpeg" },
+  { name: "Vasanta", age: "20 Yrs", height: "5'1", img: "https://beyondages.com/wp-content/uploads/2020/06/AdobeStock_71430219.jpeg" },
+  { name: "Gayathri Sadanap", age: "21 Yrs", height: "5'3", img: "https://th.bing.com/th/id/OIP.1mEPKraRlY_l_KgKK6qQKwHaD4?rs=1&pid=ImgDetMain" },
+  { name: "Spandana Queen", age: "19 Yrs", height: "4'8", img: "https://cdn2.psychologytoday.com/assets/styles/manual_crop_1_91_1_1528x800/public/field_blog_entry_images/shutterstock_193527755.jpg?itok=uS1VIBoY" },
+  { name: "Swetha M", age: "19 Yrs", height: "5'0", img: "https://th.bing.com/th/id/OIP.STZ0WGJNY4VXfFuqKNKbPgAAAA?rs=1&pid=ImgDetMain" },
+  { name: "Priya Reddy", age: "22 Yrs", height: "5'2", img: "https://th.bing.com/th/id/OIP.1mEPKraRlY_l_KgKK6qQKwHaD4?rs=1&pid=ImgDetMain" },
+  { name: "Ananya Rao", age: "24 Yrs", height: "5'5", img: "https://via.placeholder.com/150" }, // Placeholder image
+];
 const MatrimonyUI = () => {
+
   const [openLoginModal, setOpenLoginModal] = useState(false);
 
   const handleOpenLoginModal = () => setOpenLoginModal(true);
   const handleCloseLoginModal = () => setOpenLoginModal(false);
+  const displayedMatches = matches.slice(0, 6);
 
   return (
     <Box>
@@ -176,25 +187,27 @@ const MatrimonyUI = () => {
         <Typography variant="h5" gutterBottom>
           Featured Profiles
         </Typography>
-        <Grid container spacing={3}>
-          {Array.from({ length: 6 }).map((_, index) => (
-            <Grid item xs={12} sm={6} md={4} key={index}>
-              <Card>
-                <CardMedia
-                  component="img"
-                  height="200"
-                  image="https://via.placeholder.com/200"
-                  alt="Profile Picture"
-                />
-                <CardContent>
-                  <Typography variant="h6">Name: User {index + 1}</Typography>
-                  <Typography>Age: 25</Typography>
-                  <Typography>Location: City {index + 1}</Typography>
-                </CardContent>
-              </Card>
+        <Grid container spacing={2}>
+              {displayedMatches.map((match, index) => (
+                <Grid item xs={6} md={4} key={index}>
+                  <Card sx={{ textAlign: "center", padding: 1, height: 250, display: "flex", flexDirection: "column" }}>
+                    <CardMedia
+                      component="img"
+                     
+                      image={match.img}
+                      alt={match.name}
+                      sx={{ objectFit:"cover",width: "100%", height:180 }}
+                    />
+                    <CardContent sx={{ flexGrow: 1 }}>
+                      <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+                        {match.name}
+                      </Typography>
+                      <Typography variant="body2">{match.age}, {match.height}</Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
             </Grid>
-          ))}
-        </Grid>
       </Container>
 
       {/* Footer Section */}

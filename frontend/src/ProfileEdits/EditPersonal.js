@@ -35,8 +35,9 @@ const ProfilePage = () => {
 
   const handleSave = async () => {
     try {
-      await axios.put(`http://localhost:5000/update-bio/${auth.user.id}`, { bio });
+      const res= await axios.put(`http://localhost:5000/update-bio/${auth.user.id}`, { bio });
       setUser({ ...user, bio });
+      console.log(res.data);
       handleClose();
     } catch (error) {
       console.error("Error updating bio:", error);
