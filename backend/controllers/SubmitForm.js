@@ -129,6 +129,35 @@ async ProfileImage(req, res)  {
       res.status(500).json({ message: "Error saving profile" });
     }
   }
+  
+  //MBTI result
+  async mbtiResult(req, res) {
+    try {
+        const { user, mbti } = req.body; // Extract the correct fields from request body
+
+        if (!user) {
+            return res.status(400).json({ error: "User ID is required" });
+        }
+
+        let person = await Person.findOne({ userId: user });
+
+        if (!person) {
+            return res.status(404).json({ error: "User not found" });
+        }
+        console.log(mbti);
+        // Update the MBTI result
+        person.Mbti = {
+            res: mbti.res,
+            values: mbti.scores, // Correcting key name to match schema
+        };
+
+        await person.save();
+        res.status(200).json({ message: "MBTI result updated successfully" });
+      } catch (error) {
+          console.error("Error saving MBTI result:", error);
+          res.status(500).json({ error: "Internal Server Error" });
+      }
+  }
       
       // Get form data for a specific user
       async getForm (req, res)  {

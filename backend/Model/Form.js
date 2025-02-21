@@ -37,6 +37,10 @@ const personSchema = new mongoose.Schema({
     familyValues: { type: String },
     anyDisability: { type: String, default: "None" },
   },
+  Mbti: {
+    res: { type: String }, // Ensures MBTI type is a string
+    values: { type: [Number]} // Ensures `values` is an array of numbers
+  },
 });
 
 

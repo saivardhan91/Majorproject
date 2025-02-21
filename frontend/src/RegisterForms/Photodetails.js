@@ -65,7 +65,7 @@ const ProfileForm = () => {
         localStorage.removeItem("profileImage");
         localStorage.removeItem("userBio");
   
-        navigate("/Home");
+        navigate("/mbtiTest");
       }
     } catch (error) {
       toast.error("Error saving profile! ❌");

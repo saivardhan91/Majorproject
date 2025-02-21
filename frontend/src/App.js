@@ -19,6 +19,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Preferences from './HomePage/Preferences';
 import Settings from "./HomePage/Settings";
 import DeleteAccount from "./HomePage/DeleteAccount";
+import MBTITest from "./RegisterForms/MBTItest";
 function AppContent() {
   return (
     <AuthProvider>
@@ -44,6 +45,7 @@ function AppContent() {
           <Route path='/MyProfile' element={<MyProfile/>}/>
           <Route path='/preferences' element={<Preferences/>}/>
           <Route path='/settings' element={<Settings/>}/>
+          <Route path='/mbtiTest' element={<MBTITest/>}/>
           {/* <Route path='/deleteAccount' element={<DeleteAccount/>}/> */}
           {/* Add Protected Routes Here */}
         </Routes>

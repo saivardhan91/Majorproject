@@ -15,4 +15,5 @@ router.post('/change-password',SettingsController.changePassword);
 router.delete('/delete-account',SettingsController.deleteAccount);
 router.put('/update-bio/:userId',ProfileDetailsController.PersonalBio);
 router.put('/update-baiscdetails/:userId',ProfileDetailsController.BasicDetails);
+router.post("/MbtiResult",FormController.mbtiResult)
 module.exports = router;
