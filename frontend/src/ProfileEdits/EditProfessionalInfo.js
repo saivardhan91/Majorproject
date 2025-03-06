@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Box, Typography, Card, Button, Grid, CardContent, Dialog, DialogTitle, DialogContent, TextField, DialogActions } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import axios from "axios";
-import { useAuth } from "../routes/AuthContex";
+import { useAuth } from "../Routes/AuthContex";
 
 const EditProfessionalInfo = ({ user, setUser }) => {
   const auth = useAuth();

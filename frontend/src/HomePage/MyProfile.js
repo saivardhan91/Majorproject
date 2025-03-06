@@ -4,7 +4,7 @@ import {
 } from "@mui/material";
 import Navbar from "./Navbar";
 import axios from "axios";
-import { useAuth } from "../routes/AuthContex";
+import { useAuth } from "../Routes/AuthContex";
 import EditPersonal from '../ProfileEdits/EditPersonal';
 import EditBasicDetails from '../ProfileEdits/EditBasicDetails';
 import EditReligion from '../ProfileEdits/EditReligion';

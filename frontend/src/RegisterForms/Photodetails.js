@@ -4,7 +4,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";  // ✅ Import Axios
 import { toast } from "react-toastify"; // ✅ Import Toast for notifications
-import { useAuth } from "../routes/AuthContex";
+import { useAuth } from "../Routes/AuthContex";
 const ProfileForm = () => {
   const auth=useAuth();
   const [bio, setBio] = useState("");

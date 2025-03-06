@@ -13,7 +13,7 @@ import {
   CardContent,
   Modal,
 } from '@mui/material';
-import bg from '../src/images/bg_lp.webp';
+import bg from '../src/images/bg5.jpg';
 import Register from './Login/Register';
 import Login from './Login/Login';
 const matches = [
@@ -80,7 +80,7 @@ const MatrimonyUI = () => {
       </Modal>
 
       {/* Search Section */}
-  <Container maxWidth="lg" sx={{ marginTop: 4 }}>
+  {/* <Container maxWidth="lg" sx={{ marginTop: 4 }}>
   <Box
     component="form"
     sx={{
@@ -93,9 +93,9 @@ const MatrimonyUI = () => {
       borderRadius: 2,
       boxShadow: 3,
     }}
-  >
+  > */}
     {/* Looking For */}
-    <Box flexDirection={'column'} >
+    {/* <Box flexDirection={'column'} >
     <Typography sx={{marginBottom:"10px"}}>I'm looking for</Typography>
     <TextField
       select
@@ -108,9 +108,9 @@ const MatrimonyUI = () => {
       <option value="women">Women</option>
       <option value="men">Men</option>
     </TextField>
-    </Box>
+    </Box> */}
     {/* Aged Range */}
-    <Box flexDirection={'column'} >
+    {/* <Box flexDirection={'column'} >
       <Typography marginBottom={"10px"}>aged</Typography>
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
       <TextField
@@ -129,9 +129,9 @@ const MatrimonyUI = () => {
         InputProps={{ inputProps: { min: 21 } }}
       />
     </Box>
-    </Box>
+    </Box> */}
     {/* Religion Dropdown */}
-    <Box flexDirection={"column"} >
+    {/* <Box flexDirection={"column"} >
       <Typography sx={{marginBottom:"10px"}}>of religion</Typography>
     <TextField
       select
@@ -149,9 +149,9 @@ const MatrimonyUI = () => {
       <option value="buddhist">Buddhist</option>
       <option value="other">Other</option>
     </TextField>
-    </Box>
+    </Box> */}
     {/* Mother Tongue Dropdown */}
-    <Box flexDirection={'column'} >
+    {/* <Box flexDirection={'column'} >
       <Typography sx={{marginBottom:"10px"}}>and mother tongue</Typography>
     <TextField
       select
@@ -170,19 +170,19 @@ const MatrimonyUI = () => {
       <option value="bengali">Bengali</option>
       <option value="gujarati">Gujarati</option>
       <option value="punjabi">Punjabi</option>
-    </TextField>
+    </TextField> */}
 
     {/* Search Button */}
-    <Button variant="contained" color="primary" sx={{ height: 56,width:"125px",marginLeft:"25px" }}>
+    {/* <Button variant="contained" color="primary" sx={{ height: 56,width:"125px",marginLeft:"25px" }}>
       Search
     </Button>
     </Box>
   </Box>
-</Container>
+</Container> */}
 
 
 
-      {/* Profiles Section */}
+      {/* Profiles Section
       <Container maxWidth="lg" sx={{ marginTop: 4 }}>
         <Typography variant="h5" gutterBottom>
           Featured Profiles
@@ -208,10 +208,10 @@ const MatrimonyUI = () => {
                 </Grid>
               ))}
             </Grid>
-      </Container>
+      </Container> */}
 
       {/* Footer Section */}
-      <Box sx={{ backgroundColor: '#f5f5f5', padding: 2, marginTop: 4 }}>
+      <Box sx={{ backgroundColor: '#f2f5f3', padding: 4, marginTop: 0 }}>
         <Container maxWidth="lg">
           <Typography variant="body2" align="center">
             © 2025 EternalBond.com. All Rights Reserved.

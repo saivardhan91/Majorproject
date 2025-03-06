@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider } from "./routes/AuthContex";
+import { AuthProvider } from "./Routes/AuthContex";
 import Register from "./Landingpage";
 import Login from "./Login/Login";
 import ReligionDetailsForm from './RegisterForms/ReligionDetailsForm';
@@ -20,6 +20,9 @@ import Preferences from './HomePage/Preferences';
 import Settings from "./HomePage/Settings";
 import DeleteAccount from "./HomePage/DeleteAccount";
 import MBTITest from "./RegisterForms/MBTItest";
+import ForgotPassword from "./Login/Forgotpassword";
+import GenerateChatApp from "./chatApplication/GenerateChatApp";
+
 function AppContent() {
   return (
     <AuthProvider>
@@ -32,6 +35,7 @@ function AppContent() {
           {/* Public Routes */}
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/forgotpassword" element={<ForgotPassword/>}/>
           <Route path="/register/ReligionDetails" element={<ReligionDetailsForm />} />
           <Route path="/register/RegisterPersonalDetails" element={<RegisterPersonalDetail />} />
           <Route path="/register/ProfessionalDetails" element={<ProfessionalDetailsForm />} />
@@ -46,6 +50,7 @@ function AppContent() {
           <Route path='/preferences' element={<Preferences/>}/>
           <Route path='/settings' element={<Settings/>}/>
           <Route path='/mbtiTest' element={<MBTITest/>}/>
+          <Route path='/chat' element={<GenerateChatApp />} />
           {/* <Route path='/deleteAccount' element={<DeleteAccount/>}/> */}
           {/* Add Protected Routes Here */}
         </Routes>

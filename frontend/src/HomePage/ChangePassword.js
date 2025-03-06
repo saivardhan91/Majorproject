@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Container, TextField, Button, Typography, Box, Checkbox, FormControlLabel } from "@mui/material";
 import axios from 'axios';
-import { useAuth } from "../routes/AuthContex";
+import { useAuth } from "../Routes/AuthContex";
 const ChangePassword = () => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");

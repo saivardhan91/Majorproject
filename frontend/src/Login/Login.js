@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box, Typography, TextField, Button, IconButton, InputAdornment } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { useAuth } from "../routes/AuthContex";
+import { useAuth } from "../Routes/AuthContex";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
@@ -16,7 +16,7 @@ export default function Login() {
         setError("");
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
-
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -29,6 +29,9 @@ export default function Login() {
             setError(err.toString());
         }
     };
+    const forgotPassword= ()=>{
+        navigate('/forgotpassword')
+    }
 
     return (
         <Box
@@ -92,6 +95,7 @@ export default function Login() {
                 variant="body2"
                 align="left"
                 sx={{ color: "primary.main", cursor: "pointer", mb: 2 }}
+                onClick={()=>forgotPassword()}
             >
                 Forgot Password?
             </Typography>

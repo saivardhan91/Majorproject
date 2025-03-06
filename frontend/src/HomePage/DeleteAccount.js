@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Container, Typography, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
-import { useAuth } from "../routes/AuthContex";
+import { useAuth } from "../Routes/AuthContex";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 const DeleteAccount = () => {

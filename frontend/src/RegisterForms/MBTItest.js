@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../routes/AuthContex";
+import { useAuth } from "../Routes/AuthContex";
 const questions = [
   { id: 1, question: "At a party, you usually:", dichotomy: "EI", optionA: { text: "Initiate conversation and mingle", trait: "E" }, optionB: { text: "Wait for others to approach you", trait: "I" } },
   { id: 2, question: "When you have free time, you prefer:", dichotomy: "EI", optionA: { text: "Being out with friends", trait: "E" }, optionB: { text: "Being alone reading a book", trait: "I" } },
@@ -74,7 +74,7 @@ const MBTITest = () => {
     console.log(result);
     try {
       const userId = auth?.user?.id; // Replace with actual user ID (from context or auth)
-      await axios.post(`http://localhost:5000/MbtiResult`, {
+      await axios.post(`http://localhost:5000/Mbti-Result`, {
         user:userId,
         mbti: {
           res: mbtiType,

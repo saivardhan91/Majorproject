@@ -108,7 +108,7 @@ const ProfileCard = () => {
         {/* Shortlist and Favorites */}
         <Box sx={{ mt: 2, display: "flex", justifyContent: "space-between" }}>
           <Button variant="outlined" startIcon={<FavoriteBorderIcon />}>
-            Shortlist
+            Like
           </Button>
           <Button variant="contained" color="primary">
             View Similar Profiles
