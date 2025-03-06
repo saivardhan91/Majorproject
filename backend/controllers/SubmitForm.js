@@ -162,13 +162,15 @@ async ProfileImage(req, res)  {
       // Get form data for a specific user
       async getForm (req, res)  {
         try {
+          console.log("get form")
           const { userId } = req.params;
+          console.log(userId);
           const person = await Person.findOne({ userId });
-      
+          console.log(person);
           if (!person) {
             return res.status(404).json({ message: "No data found for this user" });
           }
-      
+          
           res.status(200).json({ data: person });
         } catch (error) {
           console.error("Error fetching form data:", error);

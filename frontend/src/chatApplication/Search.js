@@ -4,9 +4,10 @@ import PropTypes from 'prop-types';
 import { Box, Stack, Typography, Avatar } from '@mui/material';
 import close from '../chatApplication/images/close.png'; // Ensure the path is correct
 import socket from '../socket';
-
+import { useAuth } from '../Routes/AuthContex';
 // Chat Account Component: Displays user details
 const ChatAccounts = ({ user, onClick }) => {
+  console.log("chat account:",user)
   const byteArrayToBase64 = (byteArray) => {
     if (!Array.isArray(byteArray)) {
         console.error('Provided data is not an array');
@@ -52,6 +53,10 @@ ChatAccounts.propTypes = {
 // Fetch or create a new chat between sender and receiver
 const fetchOrCreateChat = async (senderId, receiverId, fetchConversations) => {
   try {
+
+    console.log("ftechorcreatechat");
+    console.log("senderID",senderId)
+    console.log("receiverID",receiverId)
     // Try to get the existing conversation
     const res = await axios.get(`http://localhost:5000/conversation`, {
       params: { senderId, receiverId },
@@ -87,11 +92,15 @@ const SearchAndChat = ({ handleClose, CUser, onSelectChat, fetchConversations })
   const [input, setInput] = useState("");
   const [results, setResults] = useState([]);
   const [filteredResults, setFilteredResults] = useState([]);
-
+  const auth=useAuth();
   // Fetch data from API
   const fetchData = async () => {
     try {
+
+      console.log("fetchdata");
+
       const res = await axios.get("http://localhost:5000/Search");
+      console.log(res);
       setResults(res.data);
     } catch (error) {
       console.error('Error fetching search data:', error);
@@ -119,6 +128,8 @@ const SearchAndChat = ({ handleClose, CUser, onSelectChat, fetchConversations })
 
   // Handle clicking on a user to start a chat
   const handleChatClick = async (receiverId) => {
+    console.log("auth user id ",auth?.user?._id);
+    console.log(CUser._id);
     if (receiverId === CUser._id) {
       alert('Cannot start a conversation with yourself.');
       return;

@@ -24,14 +24,16 @@ const Navbar = () => {
 
   // Fetch user data from backend
   useEffect(() => {
+    console.log("use effect in nav",auth?.user?._id)
     const fetchUserData = async () => {
       try {
+        console.log("fetch user data in nav");
         const response = await axios.get(`http://localhost:5000/get-form/${auth?.user?.id}`); // Replace with your actual API endpoint
         setUser({
           name: response?.data?.data?.name, // Extract name
           avatar: response?.data?.data?.image, // Extract Base64 image
         });
-        console.log(user);
+        console.log("use effect user:",user);
       } catch (error) {
         console.error("Error fetching user data:", error);
       }

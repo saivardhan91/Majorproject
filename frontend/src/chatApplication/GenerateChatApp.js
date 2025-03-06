@@ -11,6 +11,7 @@ export default function GenerateChatApp() {
   useEffect(() => {
     if (auth?.user?._id) {
         console.log('User ID:', auth?.user?._id); // Debugging log
+        console.log('User Id:',auth?.user?._id)
         socket.emit("addUser", auth?.user?._id);
         socket.on("getUsers", (data)=>{
           setOnline(data);
