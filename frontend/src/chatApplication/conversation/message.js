@@ -3,7 +3,7 @@ import { Box, Stack } from '@mui/material';
 import { Timeline, MediaMessage, ReplyMessage, TextMessage } from './messageTypes';
 
 export default function ChatData({ message, own,receiver,refreshConversation,openImageModal}) {
-    // console.log(message);
+   
     const renderMessage = (message) => {
         if (message.type === "msg") {
             switch (message.subtype) {

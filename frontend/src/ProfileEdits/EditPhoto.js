@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, Box, Typography, IconButton } from "@mui/material";
 import { PhotoCamera } from "@mui/icons-material";
 import axios from "axios";
-import { useAuth } from "../Routes/AuthContex";
+import { useAuth } from "../routes/AuthContex";
 
 const ProfilePhotoUpload = ({ user, setUser }) => {
   const auth = useAuth();

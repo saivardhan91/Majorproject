@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../Routes/AuthContex";
+import { useAuth } from "../routes/AuthContex";
 const ProfessionalDetailsForm = () => {
   const auth =useAuth();
   const [formData, setFormData] = useState({

@@ -7,6 +7,9 @@ const ProfileDetailsController=require('../controllers/ProfileDetailsEdit')
 const ConversationController = require('../controllers/conversation'); 
 const MessageController=require('../controllers/message');
 const userController=require('../controllers/userController')
+const MatchesController=require('../controllers/MatchesController');
+const ShortListController=require('../controllers/shortlistController');
+
 const multer=require('multer');
 const storage = multer.memoryStorage(); // Store image in memory as a Buffer
 const upload = multer({ storage: storage });
@@ -28,6 +31,7 @@ router.post("/Forgot-password",LoginController.ForgotPassword);
 router.put("/Update-password",LoginController.Changepassword);
 
 //messages
+router.get('/user/:id', userController.getUserById);
 router.post('/conversation',ConversationController.conversation);
 router.get('/conversation/:userId',ConversationController.conversationGet);
 router.post('/conversation/messages', upload.single('image'), MessageController.Message);
@@ -40,4 +44,9 @@ router.put('/UpdateConversationDate/:conversationId',ConversationController.upda
 router.put('/reaction/:messageId',MessageController.Reaction);
 router.put('/reply/:messageId',MessageController.Reply);
 router.get('/Search',userController.getAllUsers);
+
+router.get('/matches/:userId',MatchesController.getMatches);
+router.post("/shortlist",ShortListController.shortlist);
+router.delete("/shortlist/:userId/:profileId",ShortListController.deleteShortList);
+router.get("/shortlist/:userId",ShortListController.getShortListUser);
 module.exports = router;

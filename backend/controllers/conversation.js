@@ -57,16 +57,17 @@ async  deleteConversation(req, res) {
 }
 async ConversationDetails(req, res) {
   const { senderId, receiverId } = req.query;  // Extract the senderId and receiverId from the query parameters
-
+ console.log(senderId);
+ console.log(receiverId);
   try {
     // Find the conversation where both the sender and receiver are part of the members array
     const conversation = await ConversationModel.findOne({
       members: { $all: [senderId, receiverId] },
     });
 
-    if (!conversation) {
-      return res.status(404).json({ message: "Conversation not found" });
-    }
+    // if (!conversation) {
+    //   return res.status(404).json({ message: "Conversation not found" });
+    // }
 
     // Return the conversation details
     res.status(200).json(conversation);

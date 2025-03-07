@@ -3,7 +3,7 @@ import { Box, Typography, Card, Avatar, Button, Grid, CardContent, Dialog, Dialo
 import EditIcon from "@mui/icons-material/Edit";
 import Navbar from "../HomePage/Navbar";
 import axios from "axios";
-import { useAuth } from "../Routes/AuthContex";
+import { useAuth } from "../routes/AuthContex";
 
 const ProfilePage = () => {
   const auth = useAuth();

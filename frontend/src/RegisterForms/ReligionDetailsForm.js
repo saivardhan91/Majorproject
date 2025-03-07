@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { TextField, MenuItem, Select, FormControl, InputLabel, Button, Box, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useAuth } from "../Routes/AuthContex";
+import { useAuth } from "../routes/AuthContex";
 
 const FormComponent = () => {
   const auth = useAuth();

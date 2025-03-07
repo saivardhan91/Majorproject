@@ -3,7 +3,7 @@ import React,{useState,useEffect, useRef} from "react";
 import { DotsThreeVertical, DownloadSimple, Image } from "@phosphor-icons/react";
 import axios from "axios";
 import socket from "../../socket";
-import { useAuth } from '../../Routes/AuthContex';
+import { useAuth } from '../../routes/AuthContex';
 // import { format } from 'timeago.js';
 import formatDate from './dateformat';
 
@@ -32,7 +32,7 @@ export function MessageOption({ onReact, own, messageId, receiver, ele, refreshC
       const sender = ele.sender;
      
       // Make the delete request
-      const response = await axios.delete(`http://localhost:5000/sign/DeleteMessage/${messageId}`);
+      const response = await axios.delete(`http://localhost:5000/DeleteMessage/${messageId}`);
       console.log(response);
       // Emit the deleteMessage event if deletion was successful
       if (response.status === 200) {
@@ -76,8 +76,8 @@ export function MessageOption({ onReact, own, messageId, receiver, ele, refreshC
     // console.log(auth.user._id);
     try {
       // Sending a PUT request to update the reaction
-      const response = await axios.put(`http://localhost:5000/sign/reaction/${messageId}`, {
-        userId:auth?.user?._id , // Assuming currentUserId is available in your component
+      const response = await axios.put(`http://localhost:5000/reaction/${messageId}`, {
+        userId:auth?.user?.id , // Assuming currentUserId is available in your component
         type: reactionType,
       });
      socket.emit("reaction",{receiverId:receiver, messageId:messageId});

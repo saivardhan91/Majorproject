@@ -2,23 +2,43 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import { Box, Stack, Typography, Avatar } from '@mui/material';
-import close from '../chatApplication/images/close.png'; // Ensure the path is correct
+import close from '../chatApplication/images/close.png';
 import socket from '../socket';
-import { useAuth } from '../Routes/AuthContex';
-// Chat Account Component: Displays user details
-const ChatAccounts = ({ user, onClick }) => {
-  console.log("chat account:",user)
-  const byteArrayToBase64 = (byteArray) => {
-    if (!Array.isArray(byteArray)) {
-        console.error('Provided data is not an array');
-        return null;
-    }
-    const binaryString = byteArray.map(byte => String.fromCharCode(byte)).join('');
-    return btoa(binaryString);
+import { useAuth } from '../routes/AuthContex';
+
+// Function to convert byte array to base64
+const byteArrayToBase64 = (byteArray) => {
+  if (!Array.isArray(byteArray)) {
+    console.error('Provided data is not an array');
+    return null;
+  }
+  const binaryString = byteArray.map(byte => String.fromCharCode(byte)).join('');
+  return btoa(binaryString);
 };
 
-const base64String = user?.image?.data?.data ? byteArrayToBase64(user.image.data.data) : '';
-const imageUrl = base64String ? `data:image/jpeg;base64,${base64String}` : '';
+// Chat Account Component
+const ChatAccounts = ({ user, onClick }) => {
+  const [userSearchData, setUserSearchData] = useState("");
+
+  useEffect(() => {
+    const fetchdata = async () => {
+      try {
+        const res = await axios.get(`http://localhost:5000/get-form/${user?._id}`);
+        setUserSearchData(res.data.data);
+       
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+    if (user?._id) {
+      fetchdata();
+    }
+  }, [user?._id]);
+
+  // Convert user image to base64
+  const imageUrl = userSearchData.image;
+    
+
   return (
     <Box
       onClick={onClick}
@@ -34,7 +54,7 @@ const imageUrl = base64String ? `data:image/jpeg;base64,${base64String}` : '';
     >
       <Stack direction="row" alignItems="center" justifyContent="space-between">
         <Stack direction="row" spacing={2}>
-          <Avatar src={imageUrl || '/default-avatar.png'} />
+          <Avatar src={imageUrl} />
           <Stack spacing={0.3}>
             <Typography variant="subtitle2">{user?.name || 'User'}</Typography>
             <Typography variant="caption">{user.username}</Typography>
@@ -50,25 +70,24 @@ ChatAccounts.propTypes = {
   onClick: PropTypes.func.isRequired,
 };
 
-// Fetch or create a new chat between sender and receiver
+// Fetch or create a new chat
 const fetchOrCreateChat = async (senderId, receiverId, fetchConversations) => {
+  
   try {
+    console.log("Fetching or creating chat...");
+    console.log("Sender ID:", senderId);
+    console.log("Receiver ID:", receiverId);
 
-    console.log("ftechorcreatechat");
-    console.log("senderID",senderId)
-    console.log("receiverID",receiverId)
-    // Try to get the existing conversation
     const res = await axios.get(`http://localhost:5000/conversation`, {
       params: { senderId, receiverId },
     });
+
     fetchConversations();
-    
+
     if (res.data) {
-      console.log("res.data",res.data._id);
-      const ConvUpdateDate= await axios.put(`http://localhost:5000/UpdateConversationDate/${res.data._id}`);
-      console.log("updateddate",ConvUpdateDate);
-      
-      // return res.data;
+      console.log("Existing Conversation ID:", res.data._id);
+      await axios.put(`http://localhost:5000/UpdateConversationDate/${res.data._id}`);
+      return res.data; // Return existing conversation
     }
   } catch (error) {
     if (error.response && error.response.status === 404) {
@@ -77,37 +96,38 @@ const fetchOrCreateChat = async (senderId, receiverId, fetchConversations) => {
         senderId,
         receiverId,
       });
-      console.log("newcon",newConversation);
-      
-      fetchConversations(); // Fetch after creation
-      
-      return newConversation.data;
+      console.log("New Conversation Created:", newConversation);
+      fetchConversations();
+      return newConversation.data; // Return new conversation
     } else {
       console.error('Error fetching or creating conversation:', error);
     }
   }
 };
 
+// Search and Chat Component
 const SearchAndChat = ({ handleClose, CUser, onSelectChat, fetchConversations }) => {
   const [input, setInput] = useState("");
   const [results, setResults] = useState([]);
   const [filteredResults, setFilteredResults] = useState([]);
-  const auth=useAuth();
-  // Fetch data from API
-  const fetchData = async () => {
-    try {
+  const auth = useAuth();
+  const currentUserId=auth?.user?.id;
+  // Fetch users for search
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        console.log("Fetching search data...");
+        const res = await axios.get("http://localhost:5000/Search");
+        console.log("Search Data:", res.data);
+        setResults(res.data);
+      } catch (error) {
+        console.error('Error fetching search data:', error);
+      }
+    };
+    fetchData();
+  }, []);
 
-      console.log("fetchdata");
-
-      const res = await axios.get("http://localhost:5000/Search");
-      console.log(res);
-      setResults(res.data);
-    } catch (error) {
-      console.error('Error fetching search data:', error);
-    }
-  };
-
-  // Filter results based on input
+  // Handle input change for search
   const handleInputChange = (event) => {
     const newValue = event.target.value;
     setInput(newValue);
@@ -121,23 +141,24 @@ const SearchAndChat = ({ handleClose, CUser, onSelectChat, fetchConversations })
     }
   };
 
-  // Fetch data when component mounts
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   // Handle clicking on a user to start a chat
   const handleChatClick = async (receiverId) => {
-    console.log("auth user id ",auth?.user?._id);
-    console.log(CUser._id);
-    if (receiverId === CUser._id) {
+    console.log(receiverId);
+    console.log("Auth User ID:", currentUserId);
+    if (!currentUserId) {
+      console.error("Current user (CUser) is undefined");
+      return;
+    }
+
+    if (receiverId === currentUserId) {
       alert('Cannot start a conversation with yourself.');
       return;
     }
+
     try {
-      const conversation = await fetchOrCreateChat(CUser._id, receiverId, fetchConversations);
+      const conversation = await fetchOrCreateChat(currentUserId, receiverId, fetchConversations);
       onSelectChat(conversation);
-      handleClose(); 
+      handleClose();
     } catch (error) {
       console.error('Error initiating chat:', error);
     }
@@ -160,6 +181,7 @@ const SearchAndChat = ({ handleClose, CUser, onSelectChat, fetchConversations })
         flexDirection: "column",
       }}
     >
+      {/* Header */}
       <div
         className="newChat"
         style={{
@@ -179,6 +201,8 @@ const SearchAndChat = ({ handleClose, CUser, onSelectChat, fetchConversations })
           onClick={handleClose}
         />
       </div>
+
+      {/* Search Input */}
       <input
         type="text"
         value={input}
@@ -192,6 +216,8 @@ const SearchAndChat = ({ handleClose, CUser, onSelectChat, fetchConversations })
           color: "black",
         }}
       />
+
+      {/* Search Results */}
       {input && (
         <div
           style={{
@@ -228,7 +254,7 @@ SearchAndChat.propTypes = {
   handleClose: PropTypes.func.isRequired,
   CUser: PropTypes.object.isRequired,
   onSelectChat: PropTypes.func.isRequired,
-  fetchConversations: PropTypes.func.isRequired,  // Added missing prop validation
+  fetchConversations: PropTypes.func.isRequired,
 };
 
 export default SearchAndChat;

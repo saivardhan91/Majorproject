@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Grid, Box, Typography, TextField, Button, IconButton, InputAdornment } from "@mui/material";
-import { useAuth } from "../Routes/AuthContex"; // Import useAuth
+import { useAuth } from "../routes/AuthContex"; // Import useAuth
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
