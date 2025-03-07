@@ -6,15 +6,14 @@ import {
   import { Image, Smiley, PaperPlaneTilt, Phone, Info } from '@phosphor-icons/react';
   import Messages from './message';
   // import Picker from '@emoji-mart/react';
-  import Picker from 'emoji-picker-react';
+  import EmojiPicker from 'emoji-picker-react';
 
   import { Contact } from '../ContactDetails/contact';
-  import { useAuth } from '../../Routes/AuthContex';
+  import { useAuth } from '../../routes/AuthContex';
   import axios from 'axios';
   import { io } from "socket.io-client";
   import close from '../images/close.png';
   import { Close, Start } from '@mui/icons-material';
-import { now } from 'mongoose';
 import socket from '../../socket';
 const StyledInput = styled(TextField)(({ theme }) => ({
   '& .MuiInputBase-root': {
@@ -68,6 +67,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 const ChatInput = ({ setOpenPicker, newMessage, setNewMessage, handleSendMessage, receiverBlocked,conversation,refreshConversation }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const fileInputRef = useRef(null); // Add ref to file input
+  
   useEffect(() => {
     // Listen for the blockeduser event
     socket.on("blockeduser", (receiverId) => {
@@ -139,9 +139,9 @@ const ChatInput = ({ setOpenPicker, newMessage, setNewMessage, handleSendMessage
           fullWidth
           placeholder="Write a message..."
           variant="filled"
-          onChange={(e) => setNewMessage(e.target.value)}
-          value={newMessage}
-          onKeyDown={handleKeyDown} // Add onKeyDown listener
+          value={newMessage}  // Ensure controlled input
+          onChange={(e) => setNewMessage(e.target.value)}  
+          onKeyDown={handleKeyDown}
           InputProps={{
             disableUnderline: true,
             startAdornment: (
@@ -213,6 +213,8 @@ console.log(online);
         setImageModalOpen(false);
         setSelectedImage(null);
     };
+
+    console.log(auth.user.id);
    
     // console.log("ConversationMembers:",conversation);
     useEffect(() => {
@@ -224,7 +226,7 @@ console.log(online);
               setIsBlockedLocal(true);
               // handleSendMessage();
               // setReceiverBlocked(true);
-              getUsersData();
+              // getUsersData();
               // refreshConversation();
           
       },);
@@ -234,7 +236,7 @@ console.log(online);
             if (auth.user && auth.user?._id=== data.receiverId){
               setIsBlockedLocal(false);
               // setReceiverBlocked(false);
-              getUsersData();
+              // getUsersData();
               // refreshConversation();
               // handleSendMessage();
             }
@@ -247,9 +249,9 @@ console.log(online);
   }, []);
 
   useEffect(() => {
-    if (auth?.user?._id) {
+    if (auth?.user?.id) {
       // Add current user to online users list via socket
-      socket.emit("addUser", auth?.user?._id);
+      socket.emit("addUser", auth?.user?.id);
   
       // Listen for updated list of online users
       socket.on("getUsers", (data) => {
@@ -272,31 +274,6 @@ console.log(online);
 // Add `friend` to the dependency array if it can change
 
 
-  const getUsersData = async () => {
-    try {
-      const friendId = conversation?.members.find((m) => m !== CUser?._id);
-      console.log(friendId);
-      setfriendId(friendId);
-      const response = await axios.get(`http://localhost:5000/sign/user/${friendId}`);
-      const friendData = response.data;
-      console.log("friendData", friendData);
-
-      // Check if the senderId is in the blockedUsers array
-      const isSenderBlocked = friendData.blockedUsers.includes(CUser?._id);
-    // consolelog(isSenderBlocked)
-      setReceiverBlocked(isSenderBlocked);
-      console.log("receiverBlocked", isSenderBlocked);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
-
-  useEffect(() => {
-    if (conversation && CUser) {
-      getUsersData();
-    }
-  }, [conversation, CUser]); 
-       
 
     // Handle receiving messages
     // Handle receiving messages (including images)
@@ -355,14 +332,15 @@ useEffect(() => {
     useEffect(() => {
         const getUser = async () => {
             if (!conversation) return;
-
+          
             try {
-                const friendId = conversation?.members.find((m) => m !== CUser?._id);
-                const res = await axios.get(`http://localhost:5000/sign/user/${friendId}`);
+                const friendId = conversation?.members.find((m) => m !== auth?.user?.id);
+                // console.log(CUser);
+                const res = await axios.get(`http://localhost:5000/get-form/${friendId}`);
                 setReceiver(friendId);
                 console.log("res",res.data);
-                setUser(res.data);
-                console.log(user);
+                setUser(res.data.data);
+                // console.log(user);
 
                 // setBlockData(res.data.block);
             } catch (error) {
@@ -428,11 +406,7 @@ useEffect(() => {
 // }, [conversation]);
     // Handle sending messages
     const handleSendMessage = async (message, image) => {
-      if (isBlocked) {
-        alert('User is blocked');
-        return;
-    }
-
+ console.log(message);
     if (message.trim() || image) {
         const tempMessage = {
             conversationId: conversation._id,
@@ -460,14 +434,14 @@ useEffect(() => {
           try {
               const formData = new FormData();
               formData.append('conversationId', conversation._id);
-              formData.append('sender', CUser._id);
+              formData.append('sender', auth?.user?.id);
               formData.append('type', 'msg');
               formData.append('subtype', image ? 'image' : 'TextMessage');
               if (image) formData.append('image', image);
               if (message) formData.append('text', message);
     
               const startTime = Date.now();
-              const res = await axios.post('http://localhost:5000/sign/conversation/messages/', formData);
+              const res = await axios.post('http://localhost:5000/conversation/messages/', formData);
               const updatedMessage = { ...tempMessage, _id: res.data._id }
               if (image) {
                 const reader = new FileReader();
@@ -542,31 +516,16 @@ useEffect(() => {
     // }, [conversationMessages]);
 
     // Fetch block status when the conversation changes
-    useEffect(() => {
-        const checkIfBlocked = async () => {
-            if (receiver) {
-                try {
-                    const res = await axios.get(`http://localhost:5000/check/${receiver}/${CUser._id}`);
-                    console.log("Block status response:", res);
-                    const blockedStatus = res.data.isBlocked; // Assume the response returns an object with `isBlocked`
-                    setIsBlockedLocal(blockedStatus);
-                } catch (error) {
-                    console.error('Error checking block status:', error);
-                }
-            }
-        };
-
-        checkIfBlocked();
-    }, [receiver, CUser, conversation]);
+  
 
     // Fetch new messages when the conversation changes
    // Inside your Conversation component:
    useEffect(() => {
-    if (conversationMessages.length > 0) {
-        // Scroll to the bottom of the message list when a new message is added
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesEndRef.current) {
+        messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight;
     }
-}, [conversationMessages]); 
+}, [conversationMessages]);
+
 
 // Ensure that fetching the conversation only triggers when the conversation ID changes
 useEffect(() => {
@@ -574,7 +533,7 @@ useEffect(() => {
       const refreshMessages = async () => {
           try {
               const res = await axios.get(
-                  `http://localhost:5000/sign/conversation/messages/${conversation._id}`
+                  `http://localhost:5000/conversation/messages/${conversation._id}`
               );
               setConversationMessages(res.data);
 
@@ -595,7 +554,7 @@ useEffect(() => {
       if (conversation) {
           try {
               const res = await axios.get(
-                  `http://localhost:5000/sign/conversation/messages/${conversation._id}`
+                  `http://localhost:5000/conversation/messages/${conversation._id}`
               );
               setConversationMessages(res.data);
           } catch (error) {
@@ -621,9 +580,11 @@ useEffect(() => {
 console.log(friend)
 console.log(onlineUsers.includes(friend));
 
+console.log(userData);
+
 
     return (
-      <Stack height="100%" maxHeight="100vh" sx={{ width: '100%' }}>
+      <Stack height="90%" maxHeight="100vh" sx={{ width: '100%' }}>
       {conversation ? (
           <>
               {/* Header section */}
@@ -638,7 +599,7 @@ console.log(onlineUsers.includes(friend));
                                   variant={isUserOnline ? 'dot' : 'undefined'}
                                   sx={{ '& .MuiBadge-badge': { backgroundColor: '#44b700', color: '#44b700' } }}
                               >
-                                  <Avatar alt="User Avatar" src={userData?.userProfile?.profile || ''} />
+                                  <Avatar alt="User Avatar" src={user?.image || ''} />
                               </Badge>
                           </Box>
                           <Stack spacing={0.3}>
@@ -647,18 +608,12 @@ console.log(onlineUsers.includes(friend));
                               {isUserOnline? 'Online' : 'Offline'}
                           </Stack>
                       </Stack>
-                      <Stack direction="row" alignItems="center" spacing={1} marginRight="10px">
-                          {/* Call and info buttons */}
-                          {/* <IconButton>
-                              <Phone />
-                          </IconButton> */}
-                          <IconButton onClick={() => setShowInfo((prev) => !prev)}>
-                              <Info />
-                          </IconButton>
-                      </Stack>
+                      
                   </Stack>
                   {/* Pass refreshConversation to Contact component */}
-                  <Contact 
+                 
+              </Box>
+              <Contact 
                       showInfo={showInfo} 
                       setShowInfo={setShowInfo} 
                       isBlocked={isBlocked} 
@@ -669,46 +624,46 @@ console.log(onlineUsers.includes(friend));
                       conversation={conversation}
                       IsUserOnline={isUserOnline}
                   />
-              </Box>
   
               {/* Messages section */}
-              <Box sx={{ width: '100%', height: 'calc(100vh - 70px)', backgroundColor: '#F0F4FA', overflowY: 'scroll' }}>
-                  {conversationMessages.map((m) => (
-                      <div key={m._id}>
-                          <Messages message={m} own={m.sender === CUser._id} receiver={receiver} refreshConversation={refreshConversation} fetchConversations={fetchConversations}  openImageModal={openImageModal}  />
-                      </div>
-                  ))}
-                  <div ref={messagesEndRef} />
-              </Box>
+              <Box ref={messagesEndRef} sx={{ width: '100%', height: 'calc(100vh - 70px)', backgroundColor: '#F0F4FA', overflowY: 'auto' }}>
+              {conversationMessages.map((m) => (
+                
+                  <div key={m._id}>
+                      <Messages message={m} own={m.sender === auth.user.id} receiver={receiver} refreshConversation={refreshConversation} fetchConversations={fetchConversations}  openImageModal={openImageModal}  />
+                  </div>
+              ))}
+          </Box>
+
   
               {/* Input section */}
-              {!isBlocked &&  (
+              
                   <Box sx={{ height: 70, width: '100%' }} p={1}>
                       <Stack direction="row" alignItems="center" spacing={3}>
                           <Box width="100%">
-                              <ChatInput
-                                  newMessage={newMessage}
-                                  setNewMessage={setNewMessage}
-                                  handleSendMessage={handleSendMessage}
-                                  setOpenPicker={setOpenPicker}
-                                  receiverBlocked={receiverBlocked}
-                                  conversation={conversation}
-                                  refreshConversation={refreshConversation}
-                              />
-                              {openPicker && (
-                                  <Box sx={{ display: 'inline', zIndex: 10, position: 'fixed', bottom: 81, right: 100 }}>
-                                      <Picker onEmojiSelect={(emoji) => setNewMessage((prev) => prev + emoji.native)} />
-                                  </Box>
-                              )}
+                          <ChatInput
+                            newMessage={newMessage}
+                            setNewMessage={setNewMessage}
+                            handleSendMessage={handleSendMessage}
+                            setOpenPicker={setOpenPicker}
+                            receiverBlocked={receiverBlocked}
+                            conversation={conversation}
+                            refreshConversation={refreshConversation}
+                        />
+
+                            {openPicker && (
+                                <Box sx={{ display: 'inline', zIndex: 10, position: 'fixed', bottom: 81, right: 100 }}>
+                                    <EmojiPicker onEmojiClick={(emojiObject) => setNewMessage((prev) => prev + emojiObject.emoji)} />
+
+                                </Box>
+                                
+                            )}
+
                           </Box>
                       </Stack>
                   </Box>
-              )}
-              <Stack direction={'row'} justifyContent={'center'}>
-                  <Typography variant="body2">
-                      {isBlocked? "User is blocked" : ""}
-                  </Typography>
-              </Stack>
+              
+              
               <Modal
                         open={imageModalOpen}
                         onClose={closeImageModal}

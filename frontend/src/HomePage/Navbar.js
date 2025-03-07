@@ -15,7 +15,7 @@ import MessageIcon from "@mui/icons-material/Message";
 import SearchIcon from "@mui/icons-material/Search";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import { useAuth } from "../Routes/AuthContex";
+import { useAuth } from "../routes/AuthContex";
 const Navbar = () => {
   const navigate = useNavigate();
   const auth=useAuth();
@@ -50,7 +50,7 @@ const Navbar = () => {
   };
 
   return (
-    <AppBar position="static" sx={{ bgcolor: "#ff5722" }}>
+    <AppBar position="static" sx={{ bgcolor: "#ff5722", boxShadow: "none" }}>
       <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
         {/* Brand Name */}
         <Typography variant="h6" sx={{ fontWeight: "bold" }}>

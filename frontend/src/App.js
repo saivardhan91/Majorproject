@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider } from "./Routes/AuthContex";
+import { AuthProvider } from "./routes/AuthContex";
 import Register from "./Landingpage";
 import Login from "./Login/Login";
 import ReligionDetailsForm from './RegisterForms/ReligionDetailsForm';

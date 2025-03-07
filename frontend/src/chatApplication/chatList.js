@@ -7,7 +7,7 @@ import { faker } from '@faker-js/faker';
 import { Users } from 'phosphor-react';
 import Friends from '../chatApplication/CreateGroup/friends';
 // import { useAuth } from '../routes/AuthContex'; // Ensure correct path
-import { useAuth } from '../Routes/AuthContex';
+import { useAuth } from '../routes/AuthContex';
 import axios from 'axios';
 import SearchChat from './Search';
 import MessageConversation from'../chatApplication/chat'
@@ -20,15 +20,17 @@ const ChatAccounts = ({ conversation, currentUser }) => {
 const [isLoading, setIsLoading] = useState(true);
 const [user, setUser] = useState(null);
 const [userData, setUserData] = useState(null);
-
+const [userSearchData, setUserSearchData] = useState("");
+//  console.log(currentUser);
 useEffect(() => {
     const fetchUserDetails = async () => {
         try {
-            const friendId = conversation.members.find(m => m !== currentUser._id);
-
+            const friendId = conversation.members.find(m => m !== currentUser.id);
+             console.log(friendId);
             // Fetch user details by friend ID
             const res = await axios.get(`http://localhost:5000/user/${friendId}`);
             const userData = res.data;
+            console.log(res.data);
             setUser(res.data);
             // console.log("user",user);
 
@@ -57,22 +59,38 @@ useEffect(() => {
     fetchUserDetails();
 }, [conversation, currentUser._id]);
 
-useEffect(() => {
-    const fetchUserProfile = async () => {
-        try {
-            const response = await axios.get(`http://localhost:5000/CreateProfile/profile/${user?.email}`);
-            // console.log(response);
-            setUserData(response.data);
-            // console.log("chatlistdataofres", response.data);
-        } catch (error) {
-            console.error("Error fetching user profile:", error);
-        }
-    };
 
-    if (user?.email) {
-        fetchUserProfile();
+  useEffect(() => {
+    const fetchdata = async () => {
+      try {
+        const res = await axios.get(`http://localhost:5000/get-form/${user?._id}`);
+        setUserSearchData(res.data.data);
+       
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+    if (user?._id) {
+      fetchdata();
     }
-}, [user?.email]);
+  }, [user?._id]);
+
+// useEffect(() => {
+//     const fetchUserProfile = async () => {
+//         try {
+//             const response = await axios.get(`http://localhost:5000/CreateProfile/profile/${user?.email}`);
+//             // console.log(response);
+//             setUserData(response.data);
+//             // console.log("chatlistdataofres", response.data);
+//         } catch (error) {
+//             console.error("Error fetching user profile:", error);
+//         }
+//     };
+
+//     if (user?.email) {
+//         fetchUserProfile();
+//     }
+// }, [user?.email]);
 
 
   if (isLoading) {
@@ -95,7 +113,7 @@ useEffect(() => {
           <Badge
             
           >
-            <Avatar src={userData?.userProfile?.profile} sx={{ cursor: 'pointer' }} />
+            <Avatar src={userSearchData.image} sx={{ cursor: 'pointer' }} />
           </Badge>
           <Stack spacing={0.3}>
             <Typography variant="subtitle2">
@@ -106,8 +124,8 @@ useEffect(() => {
             </Typography>
           </Stack>
         </Stack>
-        <Stack spacing={2} alignItems="center">
-          <Typography sx={{ fontWeight: '600' }} variant="caption">
+        <Stack spacing={1} alignItems="center" mr={1}>
+          <Typography sx={{ fontWeight: '600'}} variant="caption" >
           {formatDate(conversation.updatedAt)}
 
           </Typography>
@@ -220,10 +238,10 @@ export default function ChatList() {
     // setOpen(true);
     setCurrentChat(currentChat);
   };
-  
+  console.log(user);
   const fetchConversations = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/conversation/${user?._id}`);
+      const res = await axios.get(`http://localhost:5000/conversation/${user?.id}`);
       setConversation(res.data);
     } catch (error) {
       console.error("Error fetching conversations:", error.response || error.message);
@@ -232,8 +250,8 @@ export default function ChatList() {
   };
 
   useEffect(() => {
-    if (user._id) fetchConversations();
-  }, [user._id]);
+    if (user?.id) fetchConversations();
+  }, [user?.id]);
 
   useEffect(()=>{
     socket.on("AccountDeleted",fetchConversations);
@@ -266,14 +284,13 @@ export default function ChatList() {
 // 
   return (
     <>
-      <Stack direction="row">
+      <Stack direction="row" >
         <Box height={'100vh'} sx={{borderRight:"1px solid black"}}>
         <Box
           sx={{
             height: '95vh',
-            width: 320,
-            // boxShadow: '2px 0px 1px rgba(0, 0, 0, 0.2), -2px 0px 1px rgba(0, 0, 0, 0.2)',
-            // backgroundColor: '#F8FAFF',
+            width: 300,
+           
             position: 'relative',
             display: 'flex',
             flexDirection: 'column',
@@ -333,7 +350,8 @@ export default function ChatList() {
                 sx={{
                   backgroundColor: currentChat?._id === c._id ? '#E8F5FE' : 'transparent',  // Highlight the active chat
                   cursor: 'pointer',
-                  borderRadius:'5px'
+                  borderRadius:'5px',
+                  paddingRight:"5px"
                 }}
               >
                 <ChatAccounts conversation={c} currentUser={user} />

@@ -15,7 +15,7 @@ import MessageIcon from "@mui/icons-material/Message";
 import SearchIcon from "@mui/icons-material/Search";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import { useAuth } from "../Routes/AuthContex";
+import { useAuth } from "../routes/AuthContex";
 const Navbar = () => {
   const navigate = useNavigate();
   const auth=useAuth();
@@ -24,7 +24,7 @@ const Navbar = () => {
 
   // Fetch user data from backend
   useEffect(() => {
-    console.log("use effect in nav",auth?.user?._id)
+    console.log("use effect in nav",auth?.user?.id)
     const fetchUserData = async () => {
       try {
         console.log("fetch user data in nav");

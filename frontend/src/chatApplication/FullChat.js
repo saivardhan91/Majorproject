@@ -7,7 +7,7 @@ export default function GenerateChatApp() {
   
  
   return (
-      <Box sx={{ display: 'flex', flexGrow: 1, width:"80%"}}>
+      <Box sx={{ display: 'flex', flexGrow: 1, width:"100%"}}>
         <Chatlist /> 
         <Chat /> 
       </Box>

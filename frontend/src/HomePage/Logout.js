@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Card, CardContent, Typography, Button } from "@mui/material";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../Routes/AuthContex";
+import { useAuth } from "../routes/AuthContex";
 const Logout = () => {
   const navigate = useNavigate();
     const { logout } = useAuth();  
